@@ -1,61 +1,70 @@
 import 'dart:math';
 void main(){
-  sp1 spaceship1 = sp1(100, 1000);
-  sp2 spaceship2 = sp2(100, 1000);
-
+  sp1 spaceship1 = sp1(1000, 100);
+  sp2 spaceship2 = sp2(200, 1000);
+print("<Star War>");
   BattleField().startBattle(spaceship1, spaceship2);
 }
 abstract class SpaceShip{
   double health;
   double firePower;
-  SpaceShip(this.firePower,this.health);
+  SpaceShip(this.health,this.firePower);
   void hit(double firePower);
   void isDestroyed();
 }
 class sp1 extends SpaceShip{
-  sp1(super.firePower, super.health);
+  sp1(super.health, super.firepower);
 
   @override
-  void hit(double firepower){
+  void hit(double fp){
 
     AmoredSpaceShip absorb= AmoredSpaceShip();
     double hit = absorb.absordHit();
-    double damage =firePower- (firepower*(hit/100));
+    double damage =fp- (fp*(hit/100));
+    double actualHitAbsorbed = (fp*(hit/100));
     health = health - damage;
-    print('sp1 attack sp2 with damage:$damage');
+    print('\n<----- Spaceship 2 attacked Spaceship 1 ----->\n'
+        'damage:${double.parse(damage.toStringAsFixed(2))} \t'
+        'absorbed hit:${double.parse(actualHitAbsorbed.toStringAsFixed(2))}');
     isDestroyed();
   }
   void isDestroyed(){
     if(health<=0){
-      print("Game Over >>> Space Ship 2 Win!!");
+      print('\n<---------------- Game Over ----------------->\n'
+          'Spaceship 2 Win!! ');
     }else{
-      print("battle continue> sp1 remaining health:$health");
+      print('Spaceship 1 >> Remaining health:${double.parse(health.toStringAsFixed(2))}');
     }
   }
 }
 class sp2 extends SpaceShip{
-  sp2(super.firePower, super.health);
+  sp2(super.health, super.firepower);
 
 
   @override
-  void hit(double firepower){
-    HighSpeedSpaceShip dodge = HighSpeedSpaceShip();
-    double damage;
-    if (dodge.dodges()==true){
+  void hit(double fp){
+    HighSpeedSpaceShip d = HighSpeedSpaceShip();
+    bool dodge = d.dodges();
+    double damage=fp;
+    if (dodge==true){
       damage = 0;
-    }else {
-      damage= firePower;
+    }else{
+      damage= fp;
     }
     health = health - damage;
-    print('sp2 attack sp1 with damage:$damage');
+
+    print('\n<----- Spaceship 1 attacked Spaceship 2 ----->\n'
+        'damage:${double.parse(damage.toStringAsFixed(2))} \t'
+        'dodge:$dodge');
     isDestroyed();
   }
 
   void isDestroyed(){
     if(health<=0){
-      print("Game Over >>> Space Ship 1 Win!!");
+      print('\n<---------------- Game Over ----------------->\n'
+          'Spaceship 1 Win!! ');
     }else{
-      print("battle continue> sp2 remaining health:$health");
+      print('Spaceship 2 >> Remaining health:${double.parse(health.toStringAsFixed(2))}');
     }
   }
 }
@@ -66,6 +75,8 @@ class BattleField{
       await Future.delayed(Duration(seconds: 1),()
       {
         final random = Random();
+        //to be fair
+        //spaceship randomly take turns to hit each other
         int rng = random.nextInt(2)+1;
         if (rng ==1) {
           sp1.hit(sp2.firePower);
@@ -78,22 +89,17 @@ class BattleField{
     }
         }
       }
-
-    //Randomly a space ship is selected to hit first
-    //SpaceShips hit each other
-    //Until one of them is destroyed
-
+//special power for spaceship 2
 class AmoredSpaceShip{
   //Randomly absorbs hit
   double absordHit(){
     double maxArmorPower;
     return
         maxArmorPower = Random().nextDouble() * 40;
-
-
   }
 
 }
+//special power for spaceship 2
 class HighSpeedSpaceShip{
   //whether dodges hit or not
   bool dodges() {
