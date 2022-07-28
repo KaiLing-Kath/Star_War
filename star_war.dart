@@ -1,39 +1,35 @@
 import 'dart:math';
 void main(){
   sp1 spaceship1 = sp1(100, 1000);
-  sp2 spaceship2 = sp2(1000, 200);
+  sp2 spaceship2 = sp2(100, 1000);
 
-  AmoredSpaceShip absorb= AmoredSpaceShip();
-  HighSpeedSpaceShip dodge = HighSpeedSpaceShip();
-  //absord hit
-  absorb.absordHit();
-  //dodge hit
-  dodge.dodges();
-
-  BattleField battlefield= BattleField();
-  battlefield.startBattle(spaceship1, spaceship2);
-
-
+  BattleField().startBattle(spaceship1, spaceship2);
 }
 abstract class SpaceShip{
-  int health;
-  int firePower;
+  double health;
+  double firePower;
   SpaceShip(this.firePower,this.health);
-  void hit(int firePower);
+  void hit(double firePower);
   void isDestroyed();
 }
 class sp1 extends SpaceShip{
   sp1(super.firePower, super.health);
 
   @override
-  void hit(int firepower){
-    health = health - firePower;
+  void hit(double firepower){
+
+    AmoredSpaceShip absorb= AmoredSpaceShip();
+    double hit = absorb.absordHit();
+    double damage =firePower- (firepower*(hit/100));
+    health = health - damage;
+    print('sp1 attack sp2 with damage:$damage');
+    isDestroyed();
   }
   void isDestroyed(){
-    if(health==0){
+    if(health<=0){
       print("Game Over >>> Space Ship 2 Win!!");
     }else{
-      print("battle continue...");
+      print("battle continue> sp1 remaining health:$health");
     }
   }
 }
@@ -42,91 +38,68 @@ class sp2 extends SpaceShip{
 
 
   @override
-  void hit(int firepower){
-    health = health - firePower;
+  void hit(double firepower){
+    HighSpeedSpaceShip dodge = HighSpeedSpaceShip();
+    double damage;
+    if (dodge.dodges()==true){
+      damage = 0;
+    }else {
+      damage= firePower;
+    }
+    health = health - damage;
+    print('sp2 attack sp1 with damage:$damage');
+    isDestroyed();
   }
+
   void isDestroyed(){
-    if(health==0){
+    if(health<=0){
       print("Game Over >>> Space Ship 1 Win!!");
     }else{
-      print("battle continue...");
+      print("battle continue> sp2 remaining health:$health");
     }
   }
 }
 
 class BattleField{
-  void startBattle(SpaceShip sp1,SpaceShip sp2 ){
-    List listOfSP =["sp1","sp2"];
-    final _random =Random();
-    var selectSP =listOfSP[_random.nextInt(listOfSP.length)];
-    print(selectSP);
-
-    if (selectSP ==sp1){
-      while(true){
-        if (sp1.health==0 && sp1.health>0){
+  void startBattle(SpaceShip sp1,SpaceShip sp2 ) async{
+    while(sp1.health>0  && sp2.health>0){
+      await Future.delayed(Duration(seconds: 1),()
+      {
+        final random = Random();
+        int rng = random.nextInt(2)+1;
+        if (rng ==1) {
           sp1.hit(sp2.firePower);
-          print("continue> sp1");}
-        else if (sp2.health!=0 && sp2.health>0){
+        } else {
           sp2.hit(sp1.firePower);
-          print("continue>sp2");}
-        else{
-          if(sp1.health==0){
-            print("Space ship 2 win");
-            break;
-          }else{
-            print("Space ship 1 win");
-            break;
-          }
-
         }
-        }
-    }else{
-      while(true){
-        if (sp2.health!=0 && sp2.health>0){
-          sp2.hit(sp1.firePower);
-          print("continue>sp2");}
-        else if (sp1.health!=0){
-          sp1.hit(sp2.firePower);
-          print("continue> sp1");}
-        else{
-          if(sp1.health==0 && sp1.health>0){
-            print("Space ship 2 win");
-            break;
-          }else{
-            print("Space ship 1 win");
-            break;
-          }
 
+
+      });
+    }
         }
       }
-    }
-
-
-
-
-
-
-
 
     //Randomly a space ship is selected to hit first
     //SpaceShips hit each other
     //Until one of them is destroyed
 
-
-  }
-}
 class AmoredSpaceShip{
   //Randomly absorbs hit
-  void absordHit(){
-    double maxArmorPower = Random().nextDouble() * 40;
-  print(maxArmorPower);
+  double absordHit(){
+    double maxArmorPower;
+    return
+        maxArmorPower = Random().nextDouble() * 40;
+
+
   }
 
 }
 class HighSpeedSpaceShip{
   //whether dodges hit or not
-  void dodges() {
-    bool dodging = Random().nextBool();
-    print(dodging);
+  bool dodges() {
+    bool dodging;
+    return
+    dodging = Random().nextBool();
+
   }
 }
